@@ -429,7 +429,9 @@
           <div class="field" id="shalom-agencia-field" style="display:none">
             <label>Agencia <span class="req">*</span></label>
             <input type="text" id="shalom-search" placeholder="Filtrar agencias..." oninput="filterShalom()" autocomplete="off" style="margin-bottom:8px;">
-            <select id="shalom-agencia" size="5" style="height:125px;border-radius:8px;" onchange="selectShalom()"></select>
+            <select id="shalom-agencia" onchange="selectShalom()">
+              <option value="">Selecciona la agencia...</option>
+            </select>
             <div class="error-msg" id="err-sagencia">Selecciona la agencia</div>
           </div>
           <div class="field" id="shalom-selected-field" style="display:none">
