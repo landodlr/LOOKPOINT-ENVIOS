@@ -721,12 +721,12 @@ function validate() {
   else showErr('err-tipo', false);
 
   if (tipoEntrega === 'shalom') {
-    const dep    = document.getElementById('shalom-dep').value;
-    const ciudad = document.getElementById('shalom-ciudad').value;
-    const ag     = document.getElementById('shalom-selected').value;
-    if (!dep)    { showErr('err-sdep', true);    ok = false; } else showErr('err-sdep', false);
-    if (!ciudad) { showErr('err-sciudad', true); ok = false; } else showErr('err-sciudad', false);
-    if (!ag)     { showErr('err-sagencia', true); ok = false; } else showErr('err-sagencia', false);
+    const dep  = document.getElementById('shalom-dep').value;
+    const prov = document.getElementById('shalom-prov').value;
+    const ag   = document.getElementById('shalom-selected').value;
+    if (!dep)  { showErr('err-sdep',    true); ok = false; } else showErr('err-sdep',    false);
+    if (!prov) { showErr('err-sprov',   true); ok = false; } else showErr('err-sprov',   false);
+    if (!ag)   { showErr('err-sagencia',true); ok = false; } else showErr('err-sagencia',false);
   }
 
   if (tipoEntrega === 'olva') {
@@ -782,7 +782,7 @@ function enviarWhatsApp() {
   if (tipoEntrega === 'shalom') {
     transportista = 'SHALOM';
     departamento  = document.getElementById('shalom-dep').value;
-    ciudad        = document.getElementById('shalom-ciudad').value;
+    ciudad        = document.getElementById('shalom-prov').value;
     agencia       = document.getElementById('shalom-selected').value;
     envioInfo = `📦 *ENVÍO POR SHALOM*\n🗺️ Departamento: ${departamento}\n🏙️ Ciudad: ${ciudad}\n🏢 Agencia destino: ${agencia}`;
   } else if (tipoEntrega === 'olva') {
