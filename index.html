@@ -429,9 +429,10 @@
           <div class="field" id="shalom-agencia-field" style="display:none">
             <label>Agencia <span class="req">*</span></label>
             <input type="text" id="shalom-search" placeholder="Filtrar agencias..." oninput="filterShalom()" autocomplete="off" style="margin-bottom:8px;">
-            <select id="shalom-agencia" onchange="selectShalom()">
+            <select id="shalom-agencia" style="margin-bottom:8px;">
               <option value="">Selecciona la agencia...</option>
             </select>
+            <button type="button" onclick="selectShalom()" style="width:100%;padding:12px;background:#c8ff00;color:#0a0a0a;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;letter-spacing:1px;">✓ CONFIRMAR AGENCIA</button>
             <div class="error-msg" id="err-sagencia">Selecciona la agencia</div>
           </div>
           <div class="field" id="shalom-selected-field" style="display:none">
@@ -461,14 +462,16 @@
           </div>
           <div class="field">
             <label>Agencia / Tienda <span class="req">*</span></label>
-            <select id="olva-agencia" onchange="fillOlvaDir()">
+            <select id="olva-agencia" style="margin-bottom:8px;">
               <option value="">Primero selecciona el departamento...</option>
             </select>
+            <button type="button" onclick="confirmarOlva()" style="width:100%;padding:12px;background:#e05c00;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;letter-spacing:1px;">✓ CONFIRMAR AGENCIA</button>
             <div class="error-msg" id="err-oagencia">Selecciona la agencia</div>
           </div>
-          <div class="field">
-            <label>Dirección de la agencia</label>
-            <input type="text" id="olva-dir" placeholder="Se llenará automáticamente" readonly style="opacity:0.6">
+          <div class="field" id="olva-selected-field" style="display:none">
+            <label>✅ Agencia confirmada</label>
+            <input type="text" id="olva-selected" readonly style="font-weight:600;color:#f5a96b;opacity:1;">
+            <div id="olva-selected-dir" style="font-size:11px;color:#777;margin-top:4px;line-height:1.4;"></div>
           </div>
         </div>
       </div>
@@ -663,16 +666,28 @@ function renderShalomList(list) {
   const sel = document.getElementById('shalom-agencia');
   sel.innerHTML = '';
   if (!list || list.length === 0) {
-    sel.innerHTML = '<option disabled>Sin resultados</option>';
+    sel.innerHTML = '<option value="" disabled>Sin resultados — intenta otro filtro</option>';
     return;
   }
+  // Opción vacía al inicio para forzar selección consciente
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = '— Selecciona una agencia —';
+  placeholder.disabled = true;
+  sel.appendChild(placeholder);
+
   list.forEach(nombre => {
-    const info = SHALOM_DIR[nombre] || {};
+    const info = SHALOM_DIR ? (SHALOM_DIR[nombre] || {}) : {};
     const opt  = document.createElement('option');
     opt.value  = nombre;
     opt.textContent = info.x ? nombre + ' — ' + info.x : nombre;
     sel.appendChild(opt);
   });
+
+  // Si solo hay una agencia, la pre-selecciona automáticamente
+  if (list.length === 1) {
+    sel.value = list[0];
+  }
 }
 
 function selectShalom() {
@@ -691,20 +706,117 @@ function selectShalom() {
 // ──────────────────────────────────────────────
 // OLVA CASCADA
 // ──────────────────────────────────────────────
+
+// ── DATOS OLVA ────────────────────────────────────────────────────
+const OLVA = {
+  "Lima": {
+    "San Juan de Lurigancho": [{name:"Tienda SJL – Próceres", dir:"Av. Próceres de la Independencia 2532, SJL"}],
+    "El Agustino":   [{name:"Tienda El Agustino", dir:"Prolongación Ayacucho 1290, El Agustino"}],
+    "Santa Anita":   [{name:"Tienda Santa Anita", dir:"Av. Santa Rosa 131, Santa Anita"}],
+    "Cercado de Lima":[{name:"Tienda Cercado – Psje. Acuña", dir:"Psje. Acuña 131, Cercado de Lima"},{name:"Tienda Plaza Tec", dir:"Av. Garcilaso de la Vega 1358, Cercado"}],
+    "Lince":         [{name:"Tienda Lince", dir:"Av. Gral. Álvarez de Arenales 1775, Lince"}],
+    "San Luis":      [{name:"Tienda San Luis", dir:"Av. del Aire 1322, San Luis"}],
+    "Pueblo Libre":  [{name:"Tienda Pueblo Libre", dir:"Av. Bolívar 1427 A, Pueblo Libre"}],
+    "San Isidro":    [{name:"Tienda San Isidro", dir:"Av. República de Panamá 3603, San Isidro"},{name:"Mail Boxes San Isidro", dir:"Begonias 774, San Isidro"}],
+    "Surquillo":     [{name:"Tienda Andrés Aramburú", dir:"Av. Andrés Aramburú 978, Surquillo"}],
+    "San Miguel":    [{name:"Tienda San Miguel", dir:"Intisuyo 295, San Miguel"}],
+    "Miraflores":    [{name:"Tienda Miraflores", dir:"Av. Comandante Espinar 659, Miraflores"},{name:"Mail Boxes Miraflores", dir:"Calle Berlín 219, Miraflores"}],
+    "San Borja":     [{name:"Tienda San Borja", dir:"Av. Aviación 3532, San Borja"}],
+    "Callao":        [{name:"Tienda Callao – Av. Sáenz Peña", dir:"Av. Sáenz Peña 1463, Callao"},{name:"Almacén Central Callao", dir:"Av. Argentina 4458, Callao"}],
+    "Los Olivos":    [{name:"Tienda Los Olivos", dir:"Av. Carlos Izaguirre 1006, Urb. Covida, Los Olivos"}],
+    "La Molina":     [{name:"Tienda La Molina", dir:"Av. Coronel Juan Pringues 458, La Molina"}],
+    "Santiago de Surco": [{name:"Tienda Surco", dir:"Av. El Polo 108, Santiago de Surco"}],
+    "San Martín de Porres": [{name:"Tienda SMP", dir:"Jr. Juan Cajahuamán 873, SMP"},{name:"Tienda Canta Callao", dir:"Av. Canta Callao 396, SMP"}],
+    "Comas":         [{name:"Tienda Comas", dir:"Av. Universitaria Norte 6971-6973, Comas"}],
+    "San Juan de Miraflores": [{name:"Tienda SJM", dir:"Av. San Juan 713, SJM"}],
+    "Chorrillos":    [{name:"Tienda Chorrillos", dir:"Prol. Av. Paseo de la República 1515, Chorrillos"}],
+    "Villa El Salvador": [{name:"Tienda VES", dir:"Av. 1ro de Mayo s/n, Villa El Salvador"}],
+    "Puente Piedra": [{name:"Tienda Puente Piedra", dir:"Av. Sáenz Peña 316, Puente Piedra"}],
+    "Lurigancho-Chosica": [{name:"Tienda Chosica", dir:"Av. Lima Sur 853, Lurigancho – Chosica"}],
+    "La Victoria":   [{name:"Tienda Gamarra", dir:"Jr. Antonio Bazo 1278-1280, La Victoria"}]
+  },
+  "Arequipa": {
+    "Arequipa": [
+      {name:"Olva – Av. Socabaya", dir:"Av. Socabaya 429-b, Arequipa"},
+      {name:"Olva – Av. Caravelí", dir:"Av. Caravelí 402, Arequipa"},
+      {name:"Olva – Av. Perú", dir:"Av. Perú 104, Arequipa"},
+      {name:"Olva – Av. Aviación", dir:"Av. Aviación 102, Arequipa"},
+      {name:"Olva – Gral. Sanchez Cerro", dir:"Av. General Sánchez Cerro s/n, Arequipa"}
+    ]
+  },
+  "La Libertad": {
+    "Trujillo": [
+      {name:"Olva Trujillo – Av. Santa", dir:"Av. Santa 1260, Trujillo"},
+      {name:"Olva Trujillo – Jr. Zepita", dir:"Jr. Zepita 572, Trujillo"},
+      {name:"Olva Trujillo – Av. Mansiche", dir:"Av. Mansiche 2042, Trujillo"},
+      {name:"Olva Trujillo – Real Plaza", dir:"Av. César Vallejo Oeste 1345, Trujillo"}
+    ]
+  },
+  "Piura": {
+    "Piura": [{name:"Olva Piura", dir:"Av. Perú 1839, Piura"}]
+  },
+  "Lambayeque": {
+    "Chiclayo": [{name:"Olva Chiclayo", dir:"Av. Obrera 1113-a, Chiclayo"}]
+  },
+  "Junín": {
+    "Huancayo": [{name:"Olva Huancayo", dir:"Av. Túpac Amaru 1675, Huancayo"},{name:"Olva Huancayo – Real Plaza", dir:"Av. César Vallejo s/n, Real Plaza Huancayo"}],
+    "Chanchamayo": [{name:"Olva La Merced", dir:"Jr. Arequipa 279, La Merced"},{name:"Olva San Ramón", dir:"Jr. Progreso 414, San Ramón"},{name:"Olva Pichanaqui", dir:"Av. Carretera Marginal 481, Pichanaqui"}],
+    "Satipo": [{name:"Olva Mazamari", dir:"Av. Perú 583, Mazamari"},{name:"Olva Pangoa", dir:"Calle Ucayali 448, Pangoa"}],
+    "Tarma": [{name:"Olva Tarma", dir:"Jr. Pasco 464, Tarma"}]
+  },
+  "San Martín": {
+    "San Martín": [{name:"Olva San Martín", dir:"Av. 27 de Diciembre 703, San Martín"}]
+  },
+  "Otros departamentos": {
+    "Consultar web": [{name:"Ver olvacourier.com/ubicanos", dir:"Verificar en olvacourier.com/ubicanos | Tel: (01) 714-0909"}]
+  }
+};
+
 function loadOlva() {
-  const dep = document.getElementById('olva-dep').value;
-  const agSel = document.getElementById('olva-agencia');
-  agSel.innerHTML = '<option value="">Selecciona la agencia...</option>';
-  document.getElementById('olva-dir').value = '';
-  if (!dep || !OLVA[dep]) return;
-  Object.values(OLVA[dep]).flat().forEach(ag => {
-    agSel.innerHTML += `<option value="${ag.dir}">${ag.name}</option>`;
+  const dep    = document.getElementById('olva-dep').value;
+  const agSel  = document.getElementById('olva-agencia');
+  const selFld = document.getElementById('olva-selected-field');
+
+  agSel.innerHTML = '<option value="">— Selecciona la agencia —</option>';
+  if (selFld) selFld.style.display = 'none';
+  document.getElementById('olva-selected').value = '';
+  document.getElementById('err-odep').classList.remove('show');
+
+  if (!dep) return;
+
+  // Buscar el dept en OLVA (puede venir con mayúsculas/minúsculas distintas)
+  const key = Object.keys(OLVA).find(k => k.toLowerCase() === dep.toLowerCase()) || dep;
+  if (!OLVA[key]) return;
+
+  Object.values(OLVA[key]).flat().forEach(ag => {
+    const opt = document.createElement('option');
+    opt.value = ag.dir;
+    opt.textContent = ag.name;
+    agSel.appendChild(opt);
   });
+
+  // Si solo hay una agencia, pre-seleccionar
+  if (agSel.options.length === 2) {
+    agSel.selectedIndex = 1;
+  }
+}
+
+function confirmarOlva() {
+  const sel  = document.getElementById('olva-agencia');
+  const name = sel.options[sel.selectedIndex]?.text || '';
+  const dir  = sel.value || '';
+  if (!name || sel.selectedIndex === 0) {
+    document.getElementById('err-oagencia').classList.add('show');
+    return;
+  }
+  document.getElementById('olva-selected').value = name;
+  document.getElementById('olva-selected-dir').textContent = dir;
+  document.getElementById('olva-selected-field').style.display = 'block';
+  document.getElementById('err-oagencia').classList.remove('show');
 }
 
 function fillOlvaDir() {
-  const ag = document.getElementById('olva-agencia');
-  document.getElementById('olva-dir').value = ag.value;
+  confirmarOlva();
 }
 
 // ──────────────────────────────────────────────
@@ -731,9 +843,9 @@ function validate() {
 
   if (tipoEntrega === 'olva') {
     const dep = document.getElementById('olva-dep').value;
-    const ag = document.getElementById('olva-agencia').value;
-    if (!dep) { showErr('err-odep', true); ok = false; } else showErr('err-odep', false);
-    if (!ag)  { showErr('err-oagencia', true); ok = false; } else showErr('err-oagencia', false);
+    const ag  = document.getElementById('olva-selected')?.value || '';
+    if (!dep) { showErr('err-odep',    true); ok = false; } else showErr('err-odep',    false);
+    if (!ag)  { showErr('err-oagencia',true); ok = false; } else showErr('err-oagencia',false);
   }
 
   if (tipoEntrega === 'delivery') {
@@ -788,9 +900,8 @@ function enviarWhatsApp() {
   } else if (tipoEntrega === 'olva') {
     transportista = 'OLVA';
     departamento  = document.getElementById('olva-dep').value;
-    const agEl    = document.getElementById('olva-agencia');
-    agencia       = agEl.options[agEl.selectedIndex]?.text || '';
-    direccion     = document.getElementById('olva-dir').value;
+    agencia       = document.getElementById('olva-selected')?.value || '';
+    direccion     = document.getElementById('olva-selected-dir')?.textContent || '';
     envioInfo = `📦 *ENVÍO POR OLVA*\n🗺️ Departamento: ${departamento}\n🏢 Agencia: ${agencia}\n📍 Dirección: ${direccion}`;
   } else {
     transportista = 'DELIVERY';
@@ -826,10 +937,8 @@ function enviarWhatsApp() {
     window._lpPixel = pixel;
   }, 300);
 
-  // Abrir WhatsApp después de 1.5s
-  setTimeout(() => {
-    window.open('https://api.whatsapp.com/send?phone=' + NUMERO_WA + '&text=' + encodeURIComponent(msg), '_blank');
-  }, 1500);
+  // Abrir WhatsApp INMEDIATAMENTE (setTimeout bloquea popups en móvil)
+  window.location.href = 'https://api.whatsapp.com/send?phone=' + NUMERO_WA + '&text=' + encodeURIComponent(msg);
 }
 
 
