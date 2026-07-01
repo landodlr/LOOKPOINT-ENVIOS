@@ -967,11 +967,11 @@ function enviarWhatsApp() {
   // UN SOLO envío (fetch)
   fetch(saveUrl, { method: 'GET', mode: 'no-cors' }).catch(() => {});
 
-  // Abrir WhatsApp después de dar tiempo al fetch
+// Abrir WhatsApp después de dar tiempo al fetch
   setTimeout(() => {
     window.location.href = 'https://api.whatsapp.com/send?phone=' + NUMERO_WA + '&text=' + encodeURIComponent(msg);
+  }, 400);
 }
-
 
 // ──────────────────────────────────────────────
 // SELECCIONAR TIPO ENTREGA
