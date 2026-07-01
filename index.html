@@ -945,28 +945,31 @@ function enviarWhatsApp() {
   document.getElementById('success-card').classList.add('show');
 
   // ── BUG 1 FIX: doble envío (fetch + pixel) para máxima fiabilidad ──
+// ── ANTI-DUPLICADOS: un solo envío + bloqueo del botón ──
+  const btn = document.querySelector('.btn-whatsapp');
+  if (btn.dataset.enviando === "1") return;  // ya se disparó, ignorar
+  btn.dataset.enviando = "1";
+  btn.style.opacity = "0.5";
+  btn.style.pointerEvents = "none";
+  btn.innerHTML = '<span style="font-size:16px">⏳</span> ENVIANDO...';
+
   const params = new URLSearchParams({
       whatsapp: wa, dni, nombre,
       tipoEntrega: tipoEntrega.toUpperCase(),
       transportista, departamento, ciudad,
       agencia, direccion, referencia,
       fechaEnvio: fecha, nota,
-      codigoPedidoLP: codigoPedidoLP || ''
+      codigoPedidoLP: codigoPedidoLP || '',
+      _uid: Date.now() + '-' + Math.random().toString(36).substring(2, 9)  // ID único por envío
     });
   const saveUrl = SCRIPT_URL + '?' + params.toString();
 
-  // Método 1: fetch GET (más rápido)
+  // UN SOLO envío (fetch)
   fetch(saveUrl, { method: 'GET', mode: 'no-cors' }).catch(() => {});
 
-  // Método 2: pixel imagen (respaldo — diferente timing)
+  // Abrir WhatsApp después de dar tiempo al fetch
   setTimeout(() => {
-    const pixel = new Image();
-    pixel.src = saveUrl + '&t=' + Date.now();
-    window._lpPixel = pixel;
-  }, 300);
-
-  // Abrir WhatsApp INMEDIATAMENTE (setTimeout bloquea popups en móvil)
-  window.location.href = 'https://api.whatsapp.com/send?phone=' + NUMERO_WA + '&text=' + encodeURIComponent(msg);
+    window.location.href = 'https://api.whatsapp.com/send?phone=' + NUMERO_WA + '&text=' + encodeURIComponent(msg);
 }
 
 
