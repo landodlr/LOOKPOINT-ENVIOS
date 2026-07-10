@@ -604,10 +604,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (fechaEl) fechaEl.setAttribute('min', today);
 // Detectar código de pedido LP en la URL (?codigo=LP-XXXXXX-PXX)
   const urlParams = new URLSearchParams(window.location.search);
-  const codigoPedidoLP = urlParams.get('codigo') || '';
+  let codigoPedidoLP = (urlParams.get('codigo') || '').toUpperCase().trim();
   const codigo = codigoPedidoLP;
   if (codigo && codigo.startsWith('LP-')) {
-    codigoPedidoLP = codigo.toUpperCase().trim();
     // Mostrar banner con código bloqueado (no editable)
     const header = document.querySelector('header');
     if (header) {
