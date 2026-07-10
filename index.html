@@ -598,13 +598,14 @@ let codigoPedidoLP = ''; // Código de pedido LP del ERP (si viene por URL)
 window._lpCallback = function() {};
 
 // Set fecha minima = hoy
+let codigoPedidoLP = '';
 document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   const fechaEl = document.getElementById('fecha');
   if (fechaEl) fechaEl.setAttribute('min', today);
 // Detectar código de pedido LP en la URL (?codigo=LP-XXXXXX-PXX)
   const urlParams = new URLSearchParams(window.location.search);
-  let codigoPedidoLP = (urlParams.get('codigo') || '').toUpperCase().trim();
+  codigoPedidoLP = (urlParams.get('codigo') || '').toUpperCase().trim();
   const codigo = codigoPedidoLP;
   if (codigo && codigo.startsWith('LP-')) {
     // Mostrar banner con código bloqueado (no editable)
