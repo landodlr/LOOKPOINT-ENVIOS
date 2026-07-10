@@ -375,58 +375,16 @@
           <span class="label">Delivery</span>
           <span class="sub">Solo Lima</span>
         </button>
-        <!-- Opción discreta para otra agencia -->
-        <div id="otra-agencia-toggle" style="text-align:center;margin-top:16px;">
-          <a href="#" onclick="event.preventDefault(); mostrarOtraAgencia()" 
-             style="color:var(--text3,#888);font-size:12px;text-decoration:none;opacity:0.7;">
-            ¿Tu envío es por otra agencia? <span style="text-decoration:underline;">Toca aquí</span>
-          </a>
-        </div>
-  
-        <!-- Sección oculta de otra agencia -->
-        <div id="sec-otra" style="display:none;">
-          <div class="section-card" style="margin-top:16px;border:1px solid rgba(200,255,0,0.15);border-radius:12px;padding:18px;">
-            <div style="font-size:13px;font-weight:600;color:var(--accent,#c8ff00);margin-bottom:14px;">📦 Envío por otra agencia</div>
-  
-            <div class="field">
-              <label>Nombre del courier o empresa <span style="color:#c8ff00">*</span></label>
-              <input type="text" id="otra-courier" placeholder="Ej: Cruz del Sur, Móvil Bus, etc." 
-                     style="background:var(--bg2,#1a1a1a);border:1px solid var(--border,#333);color:var(--text,#fff);border-radius:8px;padding:12px 14px;font-size:14px;width:100%;box-sizing:border-box;">
-            </div>
-  
-            <div class="field" style="margin-top:12px;">
-              <label>Dirección de agencia de envío <span style="color:#c8ff00">*</span></label>
-              <input type="text" id="otra-direccion" placeholder="Ej: Av. México 123, Lima" 
-                     style="background:var(--bg2,#1a1a1a);border:1px solid var(--border,#333);color:var(--text,#fff);border-radius:8px;padding:12px 14px;font-size:14px;width:100%;box-sizing:border-box;">
-            </div>
-  
-            <div class="field" style="margin-top:12px;">
-              <label>Región destino <span style="color:#c8ff00">*</span></label>
-              <input type="text" id="otra-region" placeholder="Ej: Ica" 
-                     style="background:var(--bg2,#1a1a1a);border:1px solid var(--border,#333);color:var(--text,#fff);border-radius:8px;padding:12px 14px;font-size:14px;width:100%;box-sizing:border-box;">
-            </div>
-  
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
-              <div class="field">
-                <label>Provincia</label>
-                <input type="text" id="otra-provincia" placeholder="Ej: Ica" 
-                       style="background:var(--bg2,#1a1a1a);border:1px solid var(--border,#333);color:var(--text,#fff);border-radius:8px;padding:12px 14px;font-size:14px;width:100%;box-sizing:border-box;">
-              </div>
-              <div class="field">
-                <label>Distrito</label>
-                <input type="text" id="otra-distrito" placeholder="Ej: Ica" 
-                       style="background:var(--bg2,#1a1a1a);border:1px solid var(--border,#333);color:var(--text,#fff);border-radius:8px;padding:12px 14px;font-size:14px;width:100%;box-sizing:border-box;">
-              </div>
-            </div>
-  
-            <div style="text-align:center;margin-top:14px;">
-              <a href="#" onclick="event.preventDefault(); cancelarOtraAgencia()" 
-                 style="color:#ff6b6b;font-size:12px;text-decoration:underline;">
-                Cancelar y volver a Shalom/Olva/Delivery
-              </a>
-            </div>
-          </div>
-        </div>
+      </div>
+      <!-- Opción discreta para otra agencia -->
+      <div id="otra-agencia-toggle" style="text-align:center;margin-top:16px;">
+        <a href="#" onclick="event.preventDefault(); mostrarOtraAgencia()" 
+           style="color:var(--muted);font-size:12px;text-decoration:none;opacity:0.7;">
+          ¿Tu envío es por otra agencia? <span style="text-decoration:underline;">Toca aquí</span>
+        </a>
+      </div>
+
+
         
       </div>
       <div class="error-msg" id="err-tipo">Por favor selecciona una opción de entrega</div>
@@ -575,6 +533,62 @@
           <div class="field">
             <label>Referencia</label>
             <input type="text" id="delivery-ref" placeholder="Ej: Frente al parque, edificio azul">
+          </div>
+        </div>
+      </div>
+
+      <!-- OTRA AGENCIA -->
+      <div class="section" id="sec-otra">
+        <div class="card">
+          <div class="card-label">📦 Envío por otra agencia</div>
+          <div class="field">
+            <label>Courier o empresa <span class="req">*</span></label>
+            <input type="text" id="otra-courier" list="dl-couriers" placeholder="Escribe o selecciona..." autocomplete="off">
+            <datalist id="dl-couriers">
+              <option value="Cruz del Sur"><option value="Móvil Bus"><option value="Marvisur">
+              <option value="Tepsa"><option value="Flores"><option value="Civa">
+              <option value="Movil Tours"><option value="Ittsa"><option value="Turismo Dias">
+              <option value="Palomino"><option value="GIT Transport"><option value="Yungay Express">
+            </datalist>
+            <div class="error-msg" id="err-ocourier">Ingresa el nombre del courier</div>
+          </div>
+          <div class="field">
+            <label>Región destino <span class="req">*</span></label>
+            <select id="otra-region" onchange="cargarProvinciasOtra()">
+              <option value="">Selecciona región...</option>
+              <option value="AMAZONAS">Amazonas</option><option value="ANCASH">Áncash</option>
+              <option value="APURIMAC">Apurímac</option><option value="AREQUIPA">Arequipa</option>
+              <option value="AYACUCHO">Ayacucho</option><option value="CAJAMARCA">Cajamarca</option>
+              <option value="CALLAO">Callao</option><option value="CUSCO">Cusco</option>
+              <option value="HUANCAVELICA">Huancavelica</option><option value="HUANUCO">Huánuco</option>
+              <option value="ICA">Ica</option><option value="JUNIN">Junín</option>
+              <option value="LA LIBERTAD">La Libertad</option><option value="LAMBAYEQUE">Lambayeque</option>
+              <option value="LIMA">Lima</option><option value="LORETO">Loreto</option>
+              <option value="MADRE DE DIOS">Madre de Dios</option><option value="MOQUEGUA">Moquegua</option>
+              <option value="PASCO">Pasco</option><option value="PIURA">Piura</option>
+              <option value="PUNO">Puno</option><option value="SAN MARTIN">San Martín</option>
+              <option value="TACNA">Tacna</option><option value="TUMBES">Tumbes</option>
+              <option value="UCAYALI">Ucayali</option>
+            </select>
+            <div class="error-msg" id="err-oregion">Selecciona la región</div>
+          </div>
+          <div class="two-col">
+            <div class="field">
+              <label>Provincia <span class="req">*</span></label>
+              <input type="text" id="otra-provincia" placeholder="Escribe provincia...">
+              <div class="error-msg" id="err-oprov">Ingresa la provincia</div>
+            </div>
+            <div class="field">
+              <label>Distrito <span class="req">*</span></label>
+              <input type="text" id="otra-distrito" placeholder="Escribe distrito...">
+              <div class="error-msg" id="err-odist">Ingresa el distrito</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;padding:10px 14px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:8px;">
+            <span style="font-size:12px;color:rgba(251,191,36,0.9);line-height:1.5;">⚠️ El envío por otras agencias puede demorar más que Shalom u Olva.</span>
+          </div>
+          <div style="text-align:center;margin-top:14px;">
+            <a href="#" onclick="event.preventDefault(); cancelarOtraAgencia()" style="color:#ff6b6b;font-size:12px;text-decoration:underline;">← Volver a Shalom / Olva / Delivery</a>
           </div>
         </div>
       </div>
@@ -935,21 +949,15 @@ function validate() {
     if (!dir)  { showErr('err-ddir', true); ok = false; } else showErr('err-ddir', false);
   }
   if (tipoEntrega === 'otra') {
-       const courier = document.getElementById('otra-courier').value.trim();
-       const dir = document.getElementById('otra-direccion').value.trim();
-       const region = document.getElementById('otra-region').value.trim();
-       
-       if (!courier) { toast('Ingresa el nombre del courier'); return; }
-       if (!dir) { toast('Ingresa la dirección de agencia'); return; }
-       if (!region) { toast('Ingresa la región destino'); return; }
-       
-       transportista = courier.toUpperCase();
-       departamento = region.toUpperCase();
-       ciudad = (document.getElementById('otra-provincia').value.trim() || region).toUpperCase();
-       agencia = dir;
-       direccion = '';
-       referencia = (document.getElementById('otra-distrito').value.trim() || '');
-     }
+    const courier = document.getElementById('otra-courier').value.trim();
+    const region  = document.getElementById('otra-region').value;
+    const prov    = document.getElementById('otra-provincia').value.trim();
+    const dist    = document.getElementById('otra-distrito').value.trim();
+    if (!courier) { showErr('err-ocourier', true); ok = false; } else showErr('err-ocourier', false);
+    if (!region)  { showErr('err-oregion', true); ok = false; }  else showErr('err-oregion', false);
+    if (!prov)    { showErr('err-oprov', true); ok = false; }    else showErr('err-oprov', false);
+    if (!dist)    { showErr('err-odist', true); ok = false; }    else showErr('err-odist', false);
+  }
 
   const nombre = document.getElementById('nombre').value.trim();
   const dni    = document.getElementById('dni').value.trim();
@@ -999,6 +1007,12 @@ function enviarWhatsApp() {
     agencia       = document.getElementById('olva-selected')?.value || '';
     direccion     = document.getElementById('olva-selected-dir')?.textContent || '';
     envioInfo = `📦 *ENVÍO POR OLVA*\n🗺️ Departamento: ${departamento}\n🏢 Agencia: ${agencia}\n📍 Dirección: ${direccion}`;
+  } else if (tipoEntrega === 'otra') {
+    transportista = document.getElementById('otra-courier').value.trim().toUpperCase();
+    departamento  = document.getElementById('otra-region').value;
+    ciudad        = document.getElementById('otra-provincia').value.trim().toUpperCase();
+    agencia       = document.getElementById('otra-distrito').value.trim().toUpperCase();
+    envioInfo = `📦 *ENVÍO POR ${transportista}*\n🗺️ Destino: ${departamento} / ${ciudad} / ${agencia}`;
   } else {
     transportista = 'DELIVERY';
     ciudad        = document.getElementById('delivery-distrito').value;
@@ -1006,11 +1020,6 @@ function enviarWhatsApp() {
     referencia    = document.getElementById('delivery-ref').value.trim();
     envioInfo = `🛵 *DELIVERY A DOMICILIO*\n🏙️ Distrito: ${ciudad}\n📍 Dirección: ${direccion}${referencia ? '\n📌 Referencia: ' + referencia : ''}`;
   }
-  if (tipoEntrega === 'otra') {
-      msg += `\n📦 *Envío por:* ${transportista}`;
-      msg += `\n📍 *Agencia:* ${agencia}`;
-      msg += `\n🗺️ *Destino:* ${departamento}` + (ciudad !== departamento ? ` / ${ciudad}` : '') + (referencia ? ` / ${referencia}` : '');
-    }
 
   const msg = `🛍️ *NUEVO PEDIDO – LOOK POINT*\n${'─'.repeat(30)}\n\n👤 *Cliente*\n• Nombre: ${nombre}\n• DNI/CE: ${dni}\n• WhatsApp: +51 ${wa}\n\n${envioInfo}\n\n📅 *Fecha de envío deseada:* ${fechaFmt}${nota ? '\n\n💬 *Nota:* ' + nota : ''}\n\n${'─'.repeat(30)}\n_Enviado desde el formulario Look Point_`;
 
@@ -1060,6 +1069,8 @@ function selectDelivery(tipo, btnEl) {
   document.getElementById('sec-shalom').classList.remove('visible');
   document.getElementById('sec-olva').classList.remove('visible');
   document.getElementById('sec-delivery').classList.remove('visible');
+  document.getElementById('sec-otra').classList.remove('visible');
+  document.getElementById('otra-agencia-toggle').style.display = 'block';
 
   if (tipo === 'shalom')   document.getElementById('sec-shalom').classList.add('visible');
   if (tipo === 'olva')     document.getElementById('sec-olva').classList.add('visible');
@@ -1070,48 +1081,37 @@ function selectDelivery(tipo, btnEl) {
   setTimeout(() => document.getElementById('step2-section').scrollIntoView({behavior:'smooth', block:'start'}), 100);
 }
 function mostrarOtraAgencia() {
-  // Deseleccionar las 3 opciones principales
   document.querySelectorAll('.delivery-btn').forEach(b => b.classList.remove('selected'));
-  
-  // Ocultar secciones de Shalom/Olva/Delivery
-  document.getElementById('step2-section').classList.remove('visible');
+  // Mostrar step2 y sec-otra dentro de él
+  document.getElementById('step2-section').classList.add('visible');
   document.getElementById('sec-shalom').classList.remove('visible');
   document.getElementById('sec-olva').classList.remove('visible');
   document.getElementById('sec-delivery').classList.remove('visible');
-  
-  // Mostrar sección de otra agencia
-  document.getElementById('sec-otra').style.display = 'block';
+  document.getElementById('sec-otra').classList.add('visible');
   document.getElementById('otra-agencia-toggle').style.display = 'none';
-  
-  // Marcar tipo de entrega
   tipoEntrega = 'otra';
-  
-  // Mostrar paso 3 (datos personales)
   document.getElementById('step3-section').classList.add('visible');
   document.getElementById('err-tipo').classList.remove('show');
-  
   updateSteps(2);
   setTimeout(() => document.getElementById('sec-otra').scrollIntoView({behavior:'smooth', block:'start'}), 100);
 }
 
 function cancelarOtraAgencia() {
-  // Ocultar sección de otra agencia
-  document.getElementById('sec-otra').style.display = 'none';
+  document.getElementById('sec-otra').classList.remove('visible');
+  document.getElementById('step2-section').classList.remove('visible');
   document.getElementById('otra-agencia-toggle').style.display = 'block';
-  
-  // Limpiar campos
-  ['otra-courier','otra-direccion','otra-region','otra-provincia','otra-distrito'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
+  ['otra-courier','otra-region','otra-provincia','otra-distrito'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
   });
-  
-  // Resetear tipo
   tipoEntrega = '';
-  
-  // Ocultar paso 3
   document.getElementById('step3-section').classList.remove('visible');
-  
   updateSteps(1);
+}
+
+function cargarProvinciasOtra() {
+  // Solo limpiar campos dependientes al cambiar región
+  document.getElementById('otra-provincia').value = '';
+  document.getElementById('otra-distrito').value = '';
 }
 // ──────────────────────────────────────────────
 // STEP INDICATOR
