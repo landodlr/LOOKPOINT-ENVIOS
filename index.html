@@ -598,7 +598,6 @@ let codigoPedidoLP = ''; // Código de pedido LP del ERP (si viene por URL)
 window._lpCallback = function() {};
 
 // Set fecha minima = hoy
-let codigoPedidoLP = '';
 document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   const fechaEl = document.getElementById('fecha');
